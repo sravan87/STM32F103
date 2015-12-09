@@ -52,10 +52,11 @@ libprj.a:
 .PHONY: libs clean tshow
 
 clean:
-	rm -f $(STMLIB)/CMSIS/Device/ST/STM32F10x/Source/Templates/system_stm32f10x.o
-	rm -f $(STMLIB)/STM32F10x_StdPeriph_Driver/src/*.o
-	rm -f $(STMLIB)/STM32_USB-FS-Device_Driver/src/*.o
-	rm -f $(LIBS)
+	@echo "#############   cleaning CMSIS and StdPeriph_Driver  ##########"
+	@rm -f $(STMLIB)/CMSIS/Device/ST/STM32F10x/Source/Templates/system_stm32f10x.o
+	@rm -f $(STMLIB)/STM32F10x_StdPeriph_Driver/src/*.o
+#	@rm -f $(STMLIB)/STM32_USB-FS-Device_Driver/src/*.o
+	@rm -f $(LIBS)
 
 tshow:
 	@echo "######################################################################################################"

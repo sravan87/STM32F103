@@ -5,6 +5,7 @@ LDFLAGS=$(COMMONFLAGS) -fno-exceptions -ffunction-sections -fdata-sections -L$(L
 LDLIBS+=-lm
 LDLIBS+=-lstm32
 LDLIBS+=-lrtos
+
 STARTUP=startup.c
 
 all: libs src
@@ -34,9 +35,10 @@ src:
 clean:
 	$(MAKE) -C src $@
 	$(MAKE) -C libs $@
-	rm -f $(PROGRAM).elf $(PROGRAM).hex $(PROGRAM).bin $(PROGRAM).info_elf $(PROGRAM).info_size
-	rm -f $(PROGRAM).info_code
-	rm -f $(PROGRAM).info_symbol
+	$(MAKE) -C src/freertos $@
+	@rm -f $(PROGRAM).elf $(PROGRAM).hex $(PROGRAM).bin $(PROGRAM).info_elf $(PROGRAM).info_size
+	@rm -f $(PROGRAM).info_code
+	@rm -f $(PROGRAM).info_symbol
 
 tshow:
 	@echo "######################################################################################################"

@@ -9,12 +9,107 @@
 #include "stm32f10x_rcc.h"
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_flash.h"
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
 void FLASH_ReadOutProtection_Enable(void);
 void DelayByDiv(void);
+void BlinkLedOff ( void );
+void BlinkLedOn ( void );
+
+/* The queue used by both tasks. */
+static QueueHandle_t xQueueOn = NULL;
+static QueueHandle_t xQueueOff = NULL;
+
+void vApplicationMallocFailedHook( void )
+{
+	/* vApplicationMallocFailedHook() will only be called if
+	configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
+	function that will get called if a call to pvPortMalloc() fails.
+	pvPortMalloc() is called internally by the kernel whenever a task, queue,
+	timer or semaphore is created.  It is also called by various parts of the
+	demo application.  If heap_1.c, heap_2.c or heap_4.c are used, then the size
+	of the heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE
+	in FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+	to query the size of free heap space that remains (although it does not
+	provide information on how the remaining heap might be fragmented). */
+	taskDISABLE_INTERRUPTS();
+	for( ;; );
+}
+/*-----------------------------------------------------------*/
+
+void vApplicationIdleHook( void )
+{
+	/* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+	to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
+	task.  It is essential that code added to this hook function never attempts
+	to block in any way (for example, call xQueueReceive() with a block time
+	specified, or call vTaskDelay()).  If the application makes use of the
+	vTaskDelete() API function (as this demo application does) then it is also
+	important that vApplicationIdleHook() is permitted to return to its calling
+	function, because it is the responsibility of the idle task to clean up
+	memory allocated by the kernel to any task that has since been deleted. */
+}
+/*-----------------------------------------------------------*/
+
+void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
+{
+	( void ) pcTaskName;
+	( void ) pxTask;
+
+	/* Run time stack overflow checking is performed if
+	configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook	function is
+	called if a stack overflow is detected. */
+	taskDISABLE_INTERRUPTS();
+	for( ;; );
+}
+
+void BlinkLedOff ( void )
+{
+
+	volatile unsigned int * pioc_addr = ( unsigned int *)0x40011010;
+	unsigned long ulReceivedValue;
+	const unsigned long ulValueToSend = 100UL;
+
+	while(1)
+	{
+
+		*pioc_addr = * pioc_addr |  0x20000000;
+		xQueueReceive( xQueueOff, &ulReceivedValue, portMAX_DELAY );
+		DelayByDiv(); // delay --> not much compiler optimizer settings dependent
+		xQueueSend( xQueueOn, &ulValueToSend, 0 );
+
+	}
+
+}
+
+void BlinkLedOn ( void )
+{
+
+	volatile unsigned int * pioc_addr = ( unsigned int *)0x40011010;
+	const unsigned long ulValueToSend = 100UL;
+	unsigned long ulReceivedValue;
+
+	while(1)
+	{
+		*pioc_addr = * pioc_addr | 0x2000; 
+		xQueueReceive( xQueueOn, &ulReceivedValue, portMAX_DELAY );
+		DelayByDiv(); // delay --> not much compiler optimizer settings dependent
+		xQueueSend( xQueueOff, &ulValueToSend, 0 );
+
+
+
+	}
+
+}
+
+
+
 int main(int argc, char *argv[])
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	volatile unsigned int * pioc_addr = 0x40011010;
 	// GPIOC Periph clock enable
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	// Configure PC12 to mode: slow rise-time, pushpull output
@@ -23,23 +118,36 @@ int main(int argc, char *argv[])
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz; // slow rise time
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; // push-pull output
 	GPIO_Init(GPIOC, &GPIO_InitStructure); // GPIOC init
-	FLASH_ReadOutProtection_Enable(); // enable ReadOutProtection when running Release code
 
-	while(1)
-	{
+	//FLASH_ReadOutProtection_Enable(); // enable ReadOutProtection when running Release code
 
-		*pioc_addr = * pioc_addr | 0x2000; 
-//		GPIOC->BSRR = GPIO_BSRR_BS13; // GPIO PC13 set, pin=high, LED STAT off
-//		GPIOC->BSRR = GPIO_BSRR_BS12; // GPIO PC12 set, pin=high, LED STAT off
-		//GPIO_WriteBit(GPIOC,GPIO_Pin_12,Bit_SET); // GPIO PC12 set, pin=high, LED STAT off
-		DelayByDiv(); // delay --> not much compiler optimizer settings dependent
 
-		*pioc_addr = * pioc_addr |  0x20000000;
-//		GPIOC->BSRR = GPIO_BSRR_BR13; // GPIO PC13 reset, pin=low, LED STAT on
-//		GPIOC->BSRR = GPIO_BSRR_BR12; // GPIO PC12 reset, pin=low, LED STAT on
-		//GPIO_WriteBit(GPIOC,GPIO_Pin_12,Bit_RESET); // GPIO PC12 reset, pin=low, LED STAT on
-		DelayByDiv(); // delay --> not much compiler optimizer settings dependent
-	}
+	/* Create the queue. */
+	xQueueOn = xQueueCreate( 2, sizeof( unsigned long ) );
+	xQueueOff = xQueueCreate( 2, sizeof( unsigned long ) );
+
+
+	/* Start the two tasks as described in the comments at the top of this
+	file. */
+	xTaskCreate( (TaskFunction_t)BlinkLedOff, "BlkLed", configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 2), NULL );
+	xTaskCreate( (TaskFunction_t)BlinkLedOn, "BlkLed", configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 2), NULL );
+
+#if 0
+	/* Create the software timer that is responsible for turning off the LED
+	if the button is not pushed within 5000ms, as described at the top of
+	this file. */
+	xLEDTimer = xTimerCreate( 	"LEDTimer", 				/* A text name, purely to help debugging. */
+								( 5000 / portTICK_PERIOD_MS ),/* The timer period, in this case 5000ms (5s). */
+								pdFALSE,					/* This is a one shot timer, so xAutoReload is set to pdFALSE. */
+								( void * ) 0,				/* The ID is not used, so can be set to anything. */
+								vLEDTimerCallback			/* The callback function that switches the LED off. */
+							);
+#endif
+	/* Start the tasks and timer running. */
+	vTaskStartScheduler();
+
+
+	for (;;);
 }
 
 void FLASH_ReadOutProtection_Enable(void)

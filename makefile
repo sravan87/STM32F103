@@ -33,11 +33,12 @@ src:
 	$(MAKE) -I/home/saravanan/STM/Repo/STM32F10x_StdPeriph_Lib_V3.5.0/Utilities/STM32_EVAL/ -C src $@
 
 clean:
-	$(MAKE) -C src $@
-	$(MAKE) -C libs $@
-	rm -f $(PROGRAM).elf $(PROGRAM).hex $(PROGRAM).bin $(PROGRAM).info_elf $(PROGRAM).info_size
-	rm -f $(PROGRAM).info_code
-	rm -f $(PROGRAM).info_symbol
+	@$(MAKE) -C src $@
+	@$(MAKE) -C libs $@
+	@$(MAKE) -C src/freertos $@
+	@rm -f $(PROGRAM).elf $(PROGRAM).hex $(PROGRAM).bin $(PROGRAM).info_elf $(PROGRAM).info_size
+	@rm -f $(PROGRAM).info_code
+	@rm -f $(PROGRAM).info_symbol
 
 tshow:
 	@echo "######################################################################################################"

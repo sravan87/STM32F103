@@ -30,7 +30,7 @@
 # make OptLIB=3 OptSRC=0 all tshow
 TOP=$(shell readlink -f "$(dir $(lastword $(MAKEFILE_LIST)))")
 PROGRAM=main
-LIBDIR=$(TOP)/libs $(TOP)/src/freertos
+LIBDIR=$(TOP)/libs
 #Adust the following line to the library in use
 #STMLIB=$(LIBDIR)/STM32F10x_StdPeriph_Lib_V3.5.0/Libraries
 STMLIB=$(LIBDIR)/STM32_USB-FS-Device_Lib_V4.0.0/Libraries
@@ -51,6 +51,7 @@ INCLUDE+=-I$(STMLIB)/CMSIS/Device/ST/STM32F10x/Include
 INCLUDE+=-I$(STMLIB)/CMSIS/Device/ST/STM32F10x/Source/Templates
 INCLUDE+=-I$(STMLIB)/STM32F10x_StdPeriph_Driver/inc
 INCLUDE+=-I$(STMLIB)/STM32_USB-FS-Device_Driver/inc
+INCLUDE+=-I$(TOP)/src/freertos/inc
 COMMONFLAGS=-g -mcpu=cortex-m3 -mthumb
 COMMONFLAGSlib=$(COMMONFLAGS)
 #Commands for general Makefile and src Makefile

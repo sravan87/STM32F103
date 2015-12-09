@@ -13,7 +13,8 @@ app.a: $(OBJS)
 .PHONY: src clean tshow
 
 clean:
-	rm -f app.a $(OBJS)
+	@echo "#############   cleaning src ##############"
+	@rm -f app.a $(OBJS)
 
 tshow:
 	@echo "######################################################################################################"

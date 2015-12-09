@@ -27,9 +27,10 @@ rtos.a:
 .PHONY: src clean tshow
 
 clean:
-	rm -f rtos.a 
-	rm -f ARM_CM3/*.c
-	rm -f src/*.c
+	@echo cleaning rtos
+	@rm -f librtos.a 
+	@rm -f ARM_CM3/*.o
+	@rm -f src/*.o
 
 tshow:
 	@echo "######################################################################################################"
