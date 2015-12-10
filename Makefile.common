@@ -51,7 +51,9 @@ INCLUDE+=-I$(STMLIB)/CMSIS/Device/ST/STM32F10x/Include
 INCLUDE+=-I$(STMLIB)/CMSIS/Device/ST/STM32F10x/Source/Templates
 INCLUDE+=-I$(STMLIB)/STM32F10x_StdPeriph_Driver/inc
 INCLUDE+=-I$(STMLIB)/STM32_USB-FS-Device_Driver/inc
+ifeq ($(FREE_RTOS_SUPPORTED), 1)
 INCLUDE+=-I$(TOP)/src/freertos/inc
+endif
 COMMONFLAGS=-g -mcpu=cortex-m3 -mthumb
 COMMONFLAGSlib=$(COMMONFLAGS)
 #Commands for general Makefile and src Makefile
@@ -78,6 +80,11 @@ endif
 CFLAGS+=$(COMMONFLAGS) -Wall -Werror $(INCLUDE)
 CFLAGS+=-D $(TypeOfMCU)
 CFLAGS+=-D VECT_TAB_FLASH
+
+ifeq ($(FREE_RTOS_SUPPORTED), 1)
+CFLAGS += -D FREE_RTOS_SUPPORTED
+endif
+
 #Commands for libs Makefile
 ifeq ($(OptLIB),0)
 COMMONFLAGSlib+=-O0

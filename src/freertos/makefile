@@ -7,6 +7,7 @@ all: libs
 libs: rtos.a
 
 rtos.a: 
+	@echo Building Free RTOS
 	@cd ARM_CM3 && \
 	$(CC) $(CFLAGSlib) \
 	-D"assert_param(expr)=((void)0)" \

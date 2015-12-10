@@ -10,12 +10,18 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_flash.h"
 
+#ifdef FREE_RTOS_SUPPORTED
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#endif
+
 
 void FLASH_ReadOutProtection_Enable(void);
 void DelayByDiv(void);
+
+#ifdef FREE_RTOS_SUPPORTED
+
 void BlinkLedOff ( void );
 void BlinkLedOn ( void );
 
@@ -105,6 +111,7 @@ void BlinkLedOn ( void )
 
 }
 
+#endif
 
 
 int main(int argc, char *argv[])
@@ -121,6 +128,7 @@ int main(int argc, char *argv[])
 
 	//FLASH_ReadOutProtection_Enable(); // enable ReadOutProtection when running Release code
 
+#ifdef FREE_RTOS_SUPPORTED 
 
 	/* Create the queue. */
 	xQueueOn = xQueueCreate( 2, sizeof( unsigned long ) );
@@ -148,6 +156,9 @@ int main(int argc, char *argv[])
 
 
 	for (;;);
+#endif
+
+	return 0;
 }
 
 void FLASH_ReadOutProtection_Enable(void)

@@ -3,18 +3,26 @@ include ../Makefile.common
 OBJS+=startup.o
 OBJS+=main.o
 
-all: src
+all: src 
 
-src: app.a
+src: libs app.a
 
 app.a: $(OBJS)
 	$(AR) cr app.a $(OBJS)
 
-.PHONY: src clean tshow
+libs:
+ifeq ($(FREE_RTOS_SUPPORTED), 1)
+	@$(MAKE) -C freertos $@
+endif
+
+.PHONY: libs src clean tshow
 
 clean:
 	@echo "#############   cleaning src ##############"
 	@rm -f app.a $(OBJS)
+ifeq ($(FREE_RTOS_SUPPORTED), 1)
+	@$(MAKE) -C freertos $@
+endif
 
 tshow:
 	@echo "######################################################################################################"
