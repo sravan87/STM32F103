@@ -394,6 +394,14 @@ void main_loop (void)
 	else
 #endif /* CONFIG_BOOTCOUNT_LIMIT */
 		s = getenv ("bootcmd");
+	{
+		volatile unsigned int * pioc_addr = ( unsigned int *)0x40011010;
+		int i=2;
+	
+		while(i--)
+			serial_puts("BOSCH\n");
+	
+	}
 
 	debug ("### main_loop: bootcmd=\"%s\"\n", s ? s : "<UNDEFINED>");
 

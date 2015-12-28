@@ -97,7 +97,9 @@ enum clock {
 /*
  * RCC registers base
  */
-#define STM32_RCC_BASE			(STM32_AHB1PERIPH_BASE + 0x3800)
+//#define STM32_RCC_BASE			(STM32_AHB1PERIPH_BASE + 0x3800)
+#define STM32_RCC_BASE			(STM32_AHB1PERIPH_BASE + 0x1000)
+
 #define STM32_RCC			((volatile struct stm32_rcc_regs *) \
 					STM32_RCC_BASE)
 /*

@@ -33,6 +33,8 @@
  * Disable debug messages
  */
 #undef DEBUG
+#define CONFIG_ARMCORTEXM3_SOC_INIT
+#define STM32F10X_MD
 
 /*
  * This is an ARM Cortex-M4 CPU core. Also use the common Cortex-M3 code.
@@ -63,7 +65,7 @@
 /*
  * Monitor prompt
  */
-#define CONFIG_SYS_PROMPT		"STM32F429-DISCO> "
+#define CONFIG_SYS_PROMPT		"STM32F1-BOSCH> "
 
 /*
  * We want to call the CPU specific initialization
@@ -103,8 +105,9 @@
  * Memory layout configuration
  */
 #define CONFIG_MEM_NVM_BASE		0x00000000
-#define CONFIG_MEM_NVM_LEN		(1024 * 1024 * 2)
-#define CONFIG_ENVM			1
+//#define CONFIG_MEM_NVM_LEN		(1024 * 1024 * 2)
+#define CONFIG_MEM_NVM_LEN            (1024 * 64)
+
 #if defined(CONFIG_ENVM)
 #define CONFIG_SYS_ENVM_BASE		0x08000000
 #define CONFIG_SYS_ENVM_LEN		CONFIG_MEM_NVM_LEN
@@ -124,8 +127,9 @@
 
 #define CONFIG_MEM_RAM_BASE		0x20000000
 #define CONFIG_MEM_RAM_LEN		(20 * 1024)
-#define CONFIG_MEM_RAM_BUF_LEN		(88 * 1024)
-#define CONFIG_MEM_MALLOC_LEN		(16 * 1024)
+//#define CONFIG_MEM_RAM_BUF_LEN		(88 * 1024)
+#define CONFIG_MEM_RAM_BUF_LEN          (8 * 1024)
+#define CONFIG_MEM_MALLOC_LEN		(7 * 1024)
 #define CONFIG_MEM_STACK_LEN		(4 * 1024)
 
 /*
@@ -136,8 +140,8 @@
 /*
  * Configuration of the external SDRAM memory
  */
-#define CONFIG_NR_DRAM_BANKS		1
-#define CONFIG_SYS_RAM_SIZE		(8 * 1024 * 1024)
+#define CONFIG_NR_DRAM_BANKS		0
+#define CONFIG_SYS_RAM_SIZE             (8 * 1024 * 1024)
 #define CONFIG_SYS_RAM_CS		1
 #define CONFIG_SYS_RAM_FREQ_DIV		2
 #define CONFIG_SYS_RAM_BASE		0xD0000000
@@ -150,11 +154,12 @@
 /*
  * Store env in embedded Flash
  */
-#define CONFIG_ENV_IS_IN_ENVM
-#define CONFIG_ENV_SIZE			(4 * 1024)
-#define CONFIG_ENV_ADDR 		\
-	(CONFIG_SYS_ENVM_BASE + (128 * 1024))
-#define CONFIG_INFERNO			1
+ #define CONFIG_ENV_IS_NOWHERE
+//#define CONFIG_ENV_IS_IN_ENVM
+#define CONFIG_ENV_SIZE			(1* 1024)
+//#define CONFIG_ENV_ADDR 		\
+//	(CONFIG_SYS_ENVM_BASE + CONFIG_SYS_ENVM_LEN)
+//#define CONFIG_INFERNO			1
 #define CONFIG_ENV_OVERWRITE		1
 
 /*
@@ -171,11 +176,11 @@
 
 /*
  * Ethernet configuration
- */
+ *
 #define CONFIG_NET_MULTI
 #define CONFIG_STM32_ETH
 #define CONFIG_STM32_ETH_RMII
-
+*/
 /*
  * Ethernet RX buffers are malloced from the internal SRAM (more precisely,
  * from CONFIG_SYS_MALLOC_LEN part of it). Each RX buffer has size of 1536B.
@@ -222,7 +227,7 @@
  */
 #include <config_cmd_default.h>
 #undef CONFIG_CMD_BOOTD
-#undef CONFIG_CMD_CONSOLE
+//#undef CONFIG_CMD_CONSOLE
 #undef CONFIG_CMD_ECHO
 #undef CONFIG_CMD_EDITENV
 #undef CONFIG_CMD_FPGA
@@ -232,6 +237,7 @@
 #undef CONFIG_CMD_LOADS
 #undef CONFIG_CMD_MISC
 #define CONFIG_CMD_NET
+#undef CONFIG_CMD_NET
 #undef CONFIG_CMD_NFS
 #undef CONFIG_CMD_SOURCE
 #undef CONFIG_CMD_XIMG
@@ -249,11 +255,11 @@
 /*
  * Auto-boot sequence configuration
  */
-#define CONFIG_BOOTDELAY		3
+#define CONFIG_BOOTDELAY		10
 #define CONFIG_ZERO_BOOTDELAY_CHECK
 #define CONFIG_BOOTCOMMAND		"run envmboot"
 
-#define CONFIG_HOSTNAME	stm-disco
+#define CONFIG_HOSTNAME	stm-bosch
 #define CONFIG_BOOTARGS	"stm32_platform=stm-disco "\
 				"console=ttyS0,115200 panic=10"
 #define LOADADDR		"0xD0007FC0"

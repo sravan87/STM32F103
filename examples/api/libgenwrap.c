@@ -86,6 +86,7 @@ void do_reset (void)
 
 void *malloc (size_t len)
 {
+#Eeeeeeeeeeeeeeeeeee
 	return NULL;
 }
 

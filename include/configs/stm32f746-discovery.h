@@ -233,7 +233,10 @@
 /*
  * Store env in Flash memory
  */
-#define CONFIG_ENV_IS_IN_ENVM
+
+#define CONFIG_ENV_IS_NOWHERE
+
+//#define CONFIG_ENV_IS_IN_ENVM
 #define CONFIG_ENV_SIZE			(4 * 1024)
 #define CONFIG_ENV_ADDR 		(CONFIG_SYS_ENVM_BASE + (128 * 1024))
 #define CONFIG_INFERNO			1

@@ -208,7 +208,7 @@ uchar *env_get_addr (int index)
 void set_default_env(void)
 {
 	if (sizeof(default_environment) > ENV_SIZE) {
-		puts ("*** Error - default environment is too large\n\n");
+//		puts ("*** Error - default environment is too large\n\n");
 		return;
 	}
 
@@ -252,10 +252,16 @@ void env_relocate (void)
 
 	if (gd->env_valid == 0) {
 #if defined(CONFIG_GTH)	|| defined(CONFIG_ENV_IS_NOWHERE)	/* Environment not changable */
-		puts ("Using default environment\n\n");
+		/*
+		 * We must allocate a buffer for the environment
+		 */
+		env_ptr = (env_t *)malloc (ENV_SIZE + 256);
+
+		//puts ("Using default environment\n\n");
 #else
-		puts ("*** Warning - bad CRC, using default environment\n\n");
-		show_boot_progress (-60);
+
+//		puts ("*** Warning - bad CRC, using default environment\n\n");
+//		show_boot_progress (-60);
 #endif
 		set_default_env();
 	}

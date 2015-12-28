@@ -63,7 +63,8 @@ static u32 flash_bsize[] = {
 /*
  * Flash registers base
  */
-#define STM32_FLASHREGS_BASE		(STM32_AHB1PERIPH_BASE + 0x3C00)
+//#define STM32_FLASHREGS_BASE		(STM32_AHB1PERIPH_BASE + 0x3C00)
+#define STM32_FLASHREGS_BASE		(STM32_AHB1PERIPH_BASE + 0x2000)
 
 /*
  * Flash register map

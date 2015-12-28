@@ -78,7 +78,7 @@
 /*
  * USART registers bases
  */
-#define STM32_USART1_BASE	(STM32_APB2PERIPH_BASE + 0x1000)
+#define STM32_USART1_BASE	(STM32_APB2PERIPH_BASE + 0x3800)
 #define STM32_USART2_BASE	(STM32_APB1PERIPH_BASE + 0x4400)
 #define STM32_USART3_BASE	(STM32_APB1PERIPH_BASE + 0x4800)
 #define STM32_USART4_BASE	(STM32_APB1PERIPH_BASE + 0x4C00)
@@ -229,6 +229,7 @@ s32 serial_init(void)
 	 */
 	usart_regs = (struct stm32_usart_regs *)usart_base[USART_PORT];
 
+#if 0
 	usart_enr  = (u32 *)(STM32_RCC_BASE + rcc_enr_offset[USART_PORT]);
 
 	/*
@@ -245,12 +246,15 @@ s32 serial_init(void)
 	rv = stm32f2_gpio_config(&rx_gpio, gpio_role[USART_PORT]);
 	if (rv != 0)
 		goto out;
-
+#else
+	GPIO_uboot_usart ( );
+#endif
 	/*
 	 * CR1:
 	 * - 1 Start bit, 8 Data bits, n Stop bit
 	 * - parity control disabled
 	 */
+
 	usart_regs->cr1 = STM32_USART_CR1_TE | STM32_USART_CR1_RE;
 
 	/*
@@ -296,6 +300,7 @@ void serial_setbrg(void)
 	else
 		apb_clock = clock_get(CLOCK_PCLK1);
 
+#if 0
 	/*
 	 * Assume oversampling mode of 16 Samples
 	 */
@@ -304,8 +309,11 @@ void serial_setbrg(void)
 	tmp = (int_div / 100) << STM32_USART_BRR_M_BIT;
 	frac_div = int_div - (100 * (tmp >> 4));
 	tmp |= (((frac_div * 16) + 50) / 100) & STM32_USART_BRR_F_MSK;
+#endif
+	usart_regs->brr =tmp;
 
-	usart_regs->brr = tmp;
+	/* fixme!!!!!! cpu clock  - baud rate*/
+	usart_regs->brr = 72000000/CONFIG_BAUDRATE;
 
 	return;
 }

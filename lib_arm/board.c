@@ -137,7 +137,9 @@ static int init_baudrate (void)
 
 static int display_banner (void)
 {
+
 	printf ("\n\n%s\n\n", version_string);
+
 	debug ("U-Boot code: %08lX -> %08lX  BSS: -> %08lX\n",
 	       _armboot_start, _bss_start, _bss_end);
 #ifdef CONFIG_MODEM_SUPPORT
@@ -268,11 +270,11 @@ init_fnc_t *init_sequence[] = {
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
 	init_func_i2c,
 #endif
-	dram_init,		/* configure available RAM banks */
+//	dram_init,		/* configure available RAM banks */
 #if defined(CONFIG_CMD_PCI) || defined (CONFIG_PCI)
 	arm_pci_init,
 #endif
-	display_dram_config,
+//	display_dram_config,
 	NULL,
 };
 
@@ -280,6 +282,7 @@ void start_armboot (void)
 {
 	init_fnc_t **init_fnc_ptr;
 	char *s;
+
 #if defined(CONFIG_VFD) || (defined(CONFIG_LCD) && !defined(CONFIG_FB_ADDR))
 	unsigned long addr;
 #endif

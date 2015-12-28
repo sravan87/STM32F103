@@ -84,6 +84,7 @@ static const struct stm32f2_gpio_dsc ext_ram_fsmc_fmc_gpio[] = {
 	{STM32F2_GPIO_PORT_G, STM32F2_GPIO_PIN_5},
 	/* 89, FMC_A14, BA0 */
 	{STM32F2_GPIO_PORT_G, STM32F2_GPIO_PIN_4},
+#if 0
 	/* K15, FMC_A13 */
 	/* 57, FMC_A11 */
 	{STM32F2_GPIO_PORT_G, STM32F2_GPIO_PIN_1},
@@ -121,6 +122,7 @@ static const struct stm32f2_gpio_dsc ext_ram_fsmc_fmc_gpio[] = {
 	{STM32F2_GPIO_PORT_B, STM32F2_GPIO_PIN_5},
 	/* 93, SDRAM_CLK */
 	{STM32F2_GPIO_PORT_G, STM32F2_GPIO_PIN_8},
+#endif
 };
 
 /*
@@ -131,15 +133,17 @@ static int fmc_fsmc_setup_gpio(void)
 	int rv = 0;
 	int i;
 
+#if 0
 	/*
 	 * Connect GPIOs to FMC controller
 	 */
 	for (i = 0; i < ARRAY_SIZE(ext_ram_fsmc_fmc_gpio); i++) {
 		rv = stm32f2_gpio_config(&ext_ram_fsmc_fmc_gpio[i],
-				STM32F2_GPIO_ROLE_FMC);
+				STM32F2_GPIO_ROLE_USART1);
 		if (rv)
 			goto out;
 	}
+#endif
 
 	fsmc_gpio_init_done = 1;
 out:

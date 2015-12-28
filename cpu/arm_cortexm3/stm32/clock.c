@@ -324,6 +324,8 @@ void sai_r_clk_enable(void)
  */
 static void clock_setup(void)
 {
+
+#if 0
 	u32	val;
 	int	i;
 
@@ -407,6 +409,7 @@ static void clock_setup(void)
 	/* Enable over-drive in order to reach 200MHz */
 	enable_over_drive();
 #endif
+
 	/*
 	 * Configure Flash prefetch, Instruction cache, and wait
 	 * latency.
@@ -421,6 +424,21 @@ static void clock_setup(void)
 	while ((STM32_RCC->cfgr & (STM32_RCC_CFGR_SWS_MSK <<
 				   STM32_RCC_CFGR_SWS_BIT)) !=
 	       (val << STM32_RCC_CFGR_SWS_BIT));
+#else
+	uint32_t *clk_table;
+
+	clk_table = SystemInit ();
+
+	memcpy (	clock_val, clk_table, sizeof (clock_val));
+
+	/*
+	 * Configure Flash prefetch, Instruction cache, and wait
+	 * latency.
+	 */
+	envm_config(STM32_FLASH_WS);
+
+#endif
+
 out:
 	return;
 }

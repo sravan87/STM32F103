@@ -20,6 +20,7 @@
  */
 
 #include <common.h>
+#define CONFIG_SYS_STM32F7
 
 /* ARMv7-M registers */
 /* Configuration and Control Register */
